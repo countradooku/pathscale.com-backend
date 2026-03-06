@@ -30,8 +30,8 @@ impl AppCtx {
     pub async fn new(config: Config) -> Result<Self> {
         let db = Arc::new(Db::new(&config.database).await?);
 
-        if let Some(admin_id) = &config.platform_admin_pub_id {
-            bootstrap_admin_user(&db, *admin_id).await?;
+        if let Some(user_config) = &config.user {
+            bootstrap_admin_user(&db, user_config.admin_pub_id).await?;
         }
 
         let tg_client = Client::new(config.tg_bot.token.clone())?;

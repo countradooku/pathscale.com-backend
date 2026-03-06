@@ -9,18 +9,27 @@ folder = "./"
 name = "pathscale_be"
 address = "0.0.0.0:443"
 # uncomment below when key is generated in the enviroment
-# priv_key = "/etc/letsencrypt/live/api2.nofilter.io/privkey.pem"
-# pub_certs = ["/etc/letsencrypt/live/api2.nofilter.io/fullchain.pem"]
+# TODO: PASTE THE NAME OF THE HOST SERVER
+# priv_key = "/etc/letsencrypt/live/UPDATE_ME/privkey.pem"
+# pub_certs = ["/etc/letsencrypt/live/UPDATE_ME/fullchain.pem"]
 insecure = true
 
 [honey_id]
 # Configuration for HoneyID client connection
+# if you want to use local honey instance, use this
+# addr = "ws://localhost:8443"
+# otherwise
 addr = "wss://auth.honey.id/"
 # Required field, do not comment out otherwise defaults will be applied
-app_public_id = "UPDATE_ME"
-auth_api_key = "UPDATE_ME"
-# platform_admin_pub_id = "UPDATE_ME"
+# TODO: PASTE THE ACTUAL API KEY AND ID (THESE ARE FROM WEB3)
+# app_public_id = "bf3368ed-8c7a-4295-9767-28a62ceedc9a"
+# auth_api_key = "1249a2d2-acf6-49d2-bb3e-27904f4233e0"
 
 [tg_bot]
 # t.me/pathscale_sales_bot
 token = "8280167396:AAH9hYp78oO5o2tJTHf6xMs833XSt6Jw_cE"
+
+[user]
+# Admin's public ID from HoneyAuth (obtained after user signs up)
+# Uncomment and set to the user's public ID to grant admin privileges
+admin_pub_id = "019c9e2d-e761-74f1-9a3e-7da09366db18"

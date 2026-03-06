@@ -17,7 +17,7 @@ pub struct Config {
     pub honey_id: HoneyIdConfig,
     pub tg_bot: TgBotConfig,
     #[serde(default)]
-    pub platform_admin_pub_id: Option<Uuid>,
+    pub user: Option<UserConfig>,
 }
 
 #[derive(Clone, Debug, Deserialize, SmartDefault)]
@@ -53,4 +53,9 @@ pub struct DatabaseConfig {
 #[derive(Clone, Debug, Deserialize, SmartDefault)]
 pub struct TgBotConfig {
     pub token: String,
+}
+
+#[derive(Clone, Debug, Deserialize, SmartDefault)]
+pub struct UserConfig {
+    pub admin_pub_id: Uuid,
 }
