@@ -1,0 +1,31 @@
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+
+Config(
+    definition: StructList(
+        config: (snake_case_fields: true, worktable_support: true),
+        struct_elements: [
+            StructElement(
+                inner: Struct(
+                    name: "UserView",
+                    fields: [
+                        Field(name: "userPubId", ty: UUID),
+                        Field(name: "username", ty: String),
+                        Field(name: "role", ty: EnumRef(name: "UserRole")),
+                    ],
+                ),
+            ),
+            StructElement(
+                inner: Struct(
+                    name: "SupportMessage",
+                    fields: [
+                        Field(name: "incoming", ty: Boolean),
+                        Field(name: "sentBy", ty: String),
+                        Field(name: "sentAt", ty: String),
+                        Field(name: "content", ty: String),
+                    ],
+                ),
+            ),
+        ],
+    ),
+)

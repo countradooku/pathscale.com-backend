@@ -1,0 +1,35 @@
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+Config(
+    definition: EndpointSchemaList (
+        "endpointSchemaListTemplate",
+        0, // This needs to be unique
+        [
+            EndpointSchema(
+                name: "ListUsers",
+                code: 11000,
+                parameters: [
+                ],
+                returns: [
+                    Field(
+                        name: "data",
+                        ty: DataTable(
+                            name: "User",
+                            fields: [
+                                Field(name: "userPublicId", ty: Int64),
+                                Field(name: "username", ty: String),
+                                Field(name: "role", ty: EnumRef("UserRole")),
+                            ]
+                        )
+                    )
+                ],
+                stream_response: None,
+                description: "Lists user.",
+                json_schema: (),
+                roles: [
+                    "UserRole::Admin",
+                ],
+            ),
+        ]
+    )
+)

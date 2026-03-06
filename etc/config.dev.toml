@@ -1,0 +1,26 @@
+[database]
+path = "./data"
+
+[log]
+level = "debug"
+folder = "./"
+
+[server]
+name = "pathscale_be"
+address = "0.0.0.0:443"
+# uncomment below when key is generated in the enviroment
+# priv_key = "/etc/letsencrypt/live/api2.nofilter.io/privkey.pem"
+# pub_certs = ["/etc/letsencrypt/live/api2.nofilter.io/fullchain.pem"]
+insecure = true
+
+[honey_id]
+# Configuration for HoneyID client connection
+addr = "wss://auth.honey.id/"
+# Required field, do not comment out otherwise defaults will be applied
+app_public_id = "UPDATE_ME"
+auth_api_key = "UPDATE_ME"
+# platform_admin_pub_id = "UPDATE_ME"
+
+[tg_bot]
+# t.me/pathscale_sales_bot
+token = "8280167396:AAH9hYp78oO5o2tJTHf6xMs833XSt6Jw_cE"

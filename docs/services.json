@@ -1,0 +1,304 @@
+{
+  "enums": [
+    {
+      "Enum": {
+        "name": "UserRole",
+        "variants": [
+          {
+            "description": "",
+            "name": "Public",
+            "value": 0
+          },
+          {
+            "description": "",
+            "name": "Authorized",
+            "value": 1
+          },
+          {
+            "description": "",
+            "name": "Admin",
+            "value": 2
+          },
+          {
+            "description": "This role is used exclusively for connections from the Honey-Auth BE to App BEs for comms such as token callbacks",
+            "name": "HoneyAuth",
+            "value": 3
+          }
+        ]
+      }
+    }
+  ],
+  "services": [
+    {
+      "endpoints": [
+        {
+          "code": 11000,
+          "description": "WIP",
+          "json_schema": null,
+          "name": "Init",
+          "parameters": [
+            {
+              "name": "accessToken",
+              "ty": "String"
+            }
+          ],
+          "returns": [
+            {
+              "name": "userId",
+              "ty": "UUID"
+            },
+            {
+              "name": "role",
+              "ty": {
+                "EnumRef": {
+                  "name": "UserRole"
+                }
+              }
+            }
+          ],
+          "roles": [
+            "UserRole::Public"
+          ],
+          "stream_response": null
+        }
+      ],
+      "id": 1,
+      "name": "auth"
+    },
+    {
+      "endpoints": [
+        {
+          "code": 21000,
+          "description": "",
+          "json_schema": null,
+          "name": "SetRole",
+          "parameters": [
+            {
+              "name": "userPubId",
+              "ty": "UUID"
+            },
+            {
+              "name": "role",
+              "ty": {
+                "EnumRef": {
+                  "name": "UserRole"
+                }
+              }
+            }
+          ],
+          "returns": [],
+          "roles": [
+            "UserRole::Admin"
+          ],
+          "stream_response": null
+        },
+        {
+          "code": 21001,
+          "description": "",
+          "json_schema": null,
+          "name": "ListUsers",
+          "parameters": [],
+          "returns": [
+            {
+              "name": "data",
+              "ty": {
+                "StructTable": {
+                  "struct_ref": "UserView"
+                }
+              }
+            }
+          ],
+          "roles": [
+            "UserRole::Admin"
+          ],
+          "stream_response": null
+        },
+        {
+          "code": 21002,
+          "description": "",
+          "json_schema": null,
+          "name": "AddSupports",
+          "parameters": [
+            {
+              "name": "tgHandles",
+              "ty": "String"
+            }
+          ],
+          "returns": [],
+          "roles": [
+            "UserRole::Admin"
+          ],
+          "stream_response": null
+        },
+        {
+          "code": 21003,
+          "description": "",
+          "json_schema": null,
+          "name": "RemoveSupports",
+          "parameters": [
+            {
+              "name": "tgHandles",
+              "ty": "String"
+            }
+          ],
+          "returns": [],
+          "roles": [
+            "UserRole::Admin"
+          ],
+          "stream_response": null
+        },
+        {
+          "code": 21004,
+          "description": "",
+          "json_schema": null,
+          "name": "ListSupports",
+          "parameters": [],
+          "returns": [
+            {
+              "name": "tgHandles",
+              "ty": {
+                "Vec": "String"
+              }
+            }
+          ],
+          "roles": [
+            "UserRole::Admin"
+          ],
+          "stream_response": null
+        }
+      ],
+      "id": 2,
+      "name": "admin"
+    },
+    {
+      "endpoints": [
+        {
+          "code": 31000,
+          "description": "",
+          "json_schema": null,
+          "name": "SendMsg",
+          "parameters": [
+            {
+              "name": "message",
+              "ty": "String"
+            }
+          ],
+          "returns": [],
+          "roles": [
+            "UserRole::Admin",
+            "UserRole::Authorized",
+            "UserRole::Public"
+          ],
+          "stream_response": null
+        },
+        {
+          "code": 31001,
+          "description": "",
+          "json_schema": null,
+          "name": "ListMsgs",
+          "parameters": [],
+          "returns": [
+            {
+              "name": "data",
+              "ty": {
+                "StructTable": {
+                  "struct_ref": "SupportMessage"
+                }
+              }
+            }
+          ],
+          "roles": [
+            "UserRole::Admin",
+            "UserRole::Authorized",
+            "UserRole::Public"
+          ],
+          "stream_response": null
+        },
+        {
+          "code": 31002,
+          "description": "",
+          "json_schema": null,
+          "name": "SubMsgEvents",
+          "parameters": [
+            {
+              "name": "unsub",
+              "ty": {
+                "Optional": "Boolean"
+              }
+            }
+          ],
+          "returns": [
+            {
+              "name": "data",
+              "ty": {
+                "StructTable": {
+                  "struct_ref": "SupportMessage"
+                }
+              }
+            }
+          ],
+          "roles": [
+            "UserRole::Admin",
+            "UserRole::Authorized",
+            "UserRole::Public"
+          ],
+          "stream_response": {
+            "StructTable": {
+              "struct_ref": "SupportMessage"
+            }
+          }
+        }
+      ],
+      "id": 3,
+      "name": "support"
+    }
+  ],
+  "structs": [
+    {
+      "Struct": {
+        "fields": [
+          {
+            "name": "incoming",
+            "ty": "Boolean"
+          },
+          {
+            "name": "sentBy",
+            "ty": "String"
+          },
+          {
+            "name": "sentAt",
+            "ty": "String"
+          },
+          {
+            "name": "content",
+            "ty": "String"
+          }
+        ],
+        "name": "SupportMessage"
+      }
+    },
+    {
+      "Struct": {
+        "fields": [
+          {
+            "name": "userPubId",
+            "ty": "UUID"
+          },
+          {
+            "name": "username",
+            "ty": "String"
+          },
+          {
+            "name": "role",
+            "ty": {
+              "EnumRef": {
+                "name": "UserRole"
+              }
+            }
+          }
+        ],
+        "name": "UserView"
+      }
+    }
+  ]
+}

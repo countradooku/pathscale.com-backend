@@ -1,0 +1,102 @@
+
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+
+Config(
+    definition: EndpointSchemaList(
+        service_name: "admin",
+        service_id: 2,
+        endpoints: [
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "SetRole",
+                    code: 21000,
+                    parameters: [
+                        Field(name: "userPubId", ty: UUID),
+                        Field(name: "role", ty: EnumRef(name: "UserRole")),
+                    ],
+                    returns: [],
+                    stream_response: None,
+                    description: "",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                    ],
+                ),
+            ),
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "ListUsers",
+                    code: 21001,
+                    parameters: [],
+                    returns: [
+                        Field(
+                            name: "data",
+                            ty: StructTable(struct_ref: "UserView"),
+                        ),
+                    ],
+                    stream_response: None,
+                    description: "",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                    ],
+                ),
+            ),
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "AddSupports",
+                    code: 21002,
+                    parameters: [
+                        Field(name: "tgHandles", ty: String),
+                    ],
+                    returns: [],
+                    stream_response: None,
+                    description: "",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                    ],
+                ),
+            ),
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "RemoveSupports",
+                    code: 21003,
+                    parameters: [
+                        Field(name: "tgHandles", ty: String),
+                    ],
+                    returns: [],
+                    stream_response: None,
+                    description: "",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                    ],
+                ),
+            ),
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "ListSupports",
+                    code: 21004,
+                    parameters: [],
+                    returns: [
+                        Field( name: "tgHandles", ty: Vec(String)),
+                    ],
+                    stream_response: None,
+                    description: "",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                    ],
+                ),
+            ),
+        ],
+    ),
+)
+

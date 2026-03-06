@@ -1,0 +1,38 @@
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+Config(
+    definition: EnumList (
+        [
+            EnumElement(
+                config: (
+                    worktable_support: true,
+                ),
+                inner: Enum(
+                    name: "UserRole",
+                    variants: [
+                        EnumVariant(
+                            name: "Public",
+                            value: 0,
+                            description: "",
+                        ),
+                        EnumVariant(
+                            name: "Authorized",
+                            value: 1,
+                            description: "",
+                        ),
+                        EnumVariant(
+                            name: "Admin",
+                            value: 2,
+                            description: "",
+                        ),
+                        EnumVariant(
+                            name: "HoneyAuth",
+                            value: 3,
+                            description: "This role is used exclusively for connections from the Honey-Auth BE to App BEs for comms such as token callbacks",
+                        ),
+                    ],
+                ),
+            ),
+        ]
+    )
+)

@@ -1,0 +1,76 @@
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+
+Config(
+    definition: EndpointSchemaList(
+        service_name: "support",
+        service_id: 3,
+        endpoints: [
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "SendMsg",
+                    code: 31000,
+                    parameters: [
+                        Field(name: "message", ty: String),
+                    ],
+                    returns: [],
+                    stream_response: None,
+                    description: "",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                        "UserRole::Authorized",
+                        "UserRole::Public",
+                    ],
+                ),
+            ),
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "ListMsgs",
+                    code: 31001,
+                    parameters: [],
+                    returns: [
+                        Field(
+                            name: "data",
+                            ty: StructTable(struct_ref: "SupportMessage"),
+                        ),
+                    ],
+                    stream_response: None,
+                    description: "",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                        "UserRole::Authorized",
+                        "UserRole::Public",
+                    ],
+                ),
+            ),
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "SubMsgEvents",
+                    code: 31002,
+                    parameters: [
+                        Field(name: "unsub", ty: Optional(Boolean)),
+                    ],
+                    returns: [
+                        Field(
+                            name: "data",
+                            ty: StructTable(struct_ref: "SupportMessage"),
+                        ),
+                    ],
+                    stream_response: Some(StructTable(struct_ref: "SupportMessage")),
+                    description: "",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                        "UserRole::Authorized",
+                        "UserRole::Public",
+                    ],
+                ),
+            ),
+        ],
+    ),
+)

@@ -1,0 +1,22 @@
+[Unit]
+Description=pathscale.com backend server
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+
+User=deploy
+Group=deploy
+
+Type=simple
+Restart=always
+RestartSec=10
+WorkingDirectory=/usr/local/pathscale_be/
+ExecStart=/usr/local/pathscale_be/pathscale_be --config /etc/pathscale_be/config.deploy.toml
+
+StandardError=append:/var/log/pathscale_be.log
+StandardOutput=append:/var/log/pathscale_be.log
+StandardInput=null
+
+[Install]
+WantedBy=default.target

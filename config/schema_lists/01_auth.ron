@@ -1,0 +1,32 @@
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+
+Config(
+    definition: EndpointSchemaList(
+        service_name: "auth",
+        service_id: 1,
+        config: (snake_case_fields: true),
+        endpoints: [
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "Init",
+                    code: 11000,
+                    parameters: [
+                        Field(name: "accessToken", ty: String)
+                    ],
+                    returns: [
+                        Field(name: "userPubId", ty: UUID),
+                        Field(name: "role", ty: EnumRef(name: "UserRole")),
+                    ],
+                    stream_response: None,
+                    description: "WIP",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Public",
+                    ],
+                )
+            ),
+        ]
+    )
+)
