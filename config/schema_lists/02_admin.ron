@@ -13,7 +13,7 @@ Config(
                     name: "SetRole",
                     code: 21000,
                     parameters: [
-                        Field(name: "userPubId", ty: UUID),
+                        Field(name: "user_public_id", ty: UUID),
                         Field(name: "role", ty: EnumRef(name: "UserRole")),
                     ],
                     returns: [],
@@ -51,7 +51,7 @@ Config(
                     name: "AddSupports",
                     code: 21002,
                     parameters: [
-                        Field(name: "tgHandles", ty: String),
+                        Field(name: "tg_handles", ty: String),
                     ],
                     returns: [],
                     stream_response: None,
@@ -68,7 +68,7 @@ Config(
                     name: "RemoveSupports",
                     code: 21003,
                     parameters: [
-                        Field(name: "tgHandles", ty: String),
+                        Field(name: "tg_handles", ty: String),
                     ],
                     returns: [],
                     stream_response: None,
@@ -86,7 +86,7 @@ Config(
                     code: 21004,
                     parameters: [],
                     returns: [
-                        Field( name: "tgHandles", ty: Vec(String)),
+                        Field( name: "tg_handles", ty: Vec(String)),
                     ],
                     stream_response: None,
                     description: "",

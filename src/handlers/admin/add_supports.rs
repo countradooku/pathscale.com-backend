@@ -21,7 +21,7 @@ impl RequestHandler for MethodAddSupports {
 
     async fn handle(&self, _ctx: RequestContext, req: Self::Request) -> Response<Self::Request> {
         for handle in req
-            .tgHandles
+            .tg_handles
             .split(',')
             .map(|s| s.trim().to_string())
             .filter(|s| !s.is_empty())

@@ -39,7 +39,6 @@ fn main() -> Result<()> {
         file_config: Some(FileLoggingConfig {
             path: log_dir,
             file_prefix: None,
-            file_log_level: Some(config.log.level),
             rotation: None,
         }),
     })?;

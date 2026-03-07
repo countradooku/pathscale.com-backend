@@ -44,15 +44,15 @@ pub enum UserRole {
 #[serde(rename_all = "camelCase")]
 pub struct SupportMessage {
     pub incoming: bool,
-    pub sentBy: String,
-    pub sentAt: String,
+    pub sent_by: String,
+    pub sent_at: String,
     pub content: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct UserView {
-    pub userPubId: Uuid,
+    pub user_public_id: Uuid,
     pub username: String,
     pub role: UserRole,
 }
@@ -119,7 +119,7 @@ impl From<EnumErrorCode> for ErrorCode {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddSupportsRequest {
-    pub tgHandles: String,
+    pub tg_handles: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -127,12 +127,12 @@ pub struct AddSupportsResponse {}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct InitRequest {
-    pub accessToken: String,
+    pub access_token: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct InitResponse {
-    pub userId: Uuid,
+    pub user_public_id: Uuid,
     pub role: UserRole,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -149,7 +149,7 @@ pub struct ListSupportsRequest {}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ListSupportsResponse {
-    pub tgHandles: Vec<String>,
+    pub tg_handles: Vec<String>,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -162,7 +162,7 @@ pub struct ListUsersResponse {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveSupportsRequest {
-    pub tgHandles: String,
+    pub tg_handles: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -178,7 +178,7 @@ pub struct SendMsgResponse {}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetRoleRequest {
-    pub userPubId: Uuid,
+    pub user_public_id: Uuid,
     pub role: UserRole,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -205,13 +205,13 @@ impl WsRequest for InitRequest {
   "code": 11000,
   "parameters": [
     {
-      "name": "accessToken",
+      "name": "access_token",
       "ty": "String"
     }
   ],
   "returns": [
     {
-      "name": "userId",
+      "name": "user_public_id",
       "ty": "UUID"
     },
     {
@@ -244,7 +244,7 @@ impl WsRequest for SetRoleRequest {
   "code": 21000,
   "parameters": [
     {
-      "name": "userPubId",
+      "name": "user_public_id",
       "ty": "UUID"
     },
     {
@@ -308,7 +308,7 @@ impl WsRequest for AddSupportsRequest {
   "code": 21002,
   "parameters": [
     {
-      "name": "tgHandles",
+      "name": "tg_handles",
       "ty": "String"
     }
   ],
@@ -334,7 +334,7 @@ impl WsRequest for RemoveSupportsRequest {
   "code": 21003,
   "parameters": [
     {
-      "name": "tgHandles",
+      "name": "tg_handles",
       "ty": "String"
     }
   ],
@@ -361,7 +361,7 @@ impl WsRequest for ListSupportsRequest {
   "parameters": [],
   "returns": [
     {
-      "name": "tgHandles",
+      "name": "tg_handles",
       "ty": {
         "Vec": "String"
       }

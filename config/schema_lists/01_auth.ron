@@ -13,10 +13,10 @@ Config(
                     name: "Init",
                     code: 11000,
                     parameters: [
-                        Field(name: "accessToken", ty: String)
+                        Field(name: "access_token", ty: String)
                     ],
                     returns: [
-                        Field(name: "userPubId", ty: UUID),
+                        Field(name: "user_public_id", ty: UUID),
                         Field(name: "role", ty: EnumRef(name: "UserRole")),
                     ],
                     stream_response: None,

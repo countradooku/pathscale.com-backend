@@ -24,7 +24,7 @@ impl RequestHandler for MethodListUsers {
                 .execute()?
                 .into_iter()
                 .map(|user| UserView {
-                    userPubId: user.pub_id,
+                    user_public_id: user.pub_id,
                     username: user.username,
                     role: user.role,
                 })

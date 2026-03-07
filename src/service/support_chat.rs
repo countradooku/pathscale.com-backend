@@ -91,8 +91,8 @@ impl SupportChatManager {
         let response = SubMsgEventsResponse {
             data: vec![SupportMessage {
                 incoming: false,
-                sentBy: author_name,
-                sentAt: sent_at.to_string(),
+                sent_by: author_name,
+                sent_at: sent_at.to_string(),
                 content: msg_content,
             }],
         };
@@ -112,8 +112,8 @@ impl SupportChatManager {
             .iter()
             .map(|row| SupportMessage {
                 incoming: row.incoming,
-                sentBy: row.sent_by.clone(),
-                sentAt: row.sent_at.to_string(),
+                sent_by: row.sent_by.clone(),
+                sent_at: row.sent_at.to_string(),
                 content: row.content.clone(),
             })
             .collect();
@@ -203,8 +203,8 @@ impl UpdateHandler for SupportUpdateHandler {
                 let response = SubMsgEventsResponse {
                     data: vec![SupportMessage {
                         incoming: true,
-                        sentBy: "Support".to_string(),
-                        sentAt: sent_at.to_string(),
+                        sent_by: "Support".to_string(),
+                        sent_at: sent_at.to_string(),
                         content: reply_txt.data.clone(),
                     }],
                 };

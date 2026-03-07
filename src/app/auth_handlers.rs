@@ -70,13 +70,13 @@ async fn dashboard_init(ctx: AuthorizedConnectContext, tables: Arc<Db>) -> eyre:
     // The generic authorized connect handler already sets the user role on the conn before getting here
 
     Ok(InitResponse {
-        userId: user.pub_id,
+        user_public_id: user.pub_id,
         role: user.role,
     })
 }
 
 impl AuthorizedConnectRequest for InitRequest {
     fn get_access_token(&self) -> &str {
-        &self.accessToken
+        &self.access_token
     }
 }

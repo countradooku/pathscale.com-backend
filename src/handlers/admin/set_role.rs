@@ -17,7 +17,7 @@ impl RequestHandler for MethodSetRole {
     type Request = SetRoleRequest;
 
     async fn handle(&self, _ctx: RequestContext, req: Self::Request) -> Response<Self::Request> {
-        let user_pub_id = req.userPubId;
+        let user_pub_id = req.user_public_id;
         let role = req.role;
 
         let user = self

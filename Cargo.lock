@@ -1176,8 +1176,9 @@ dependencies = [
 
 [[package]]
 name = "endpoint-libs"
-version = "1.3.0"
-source = "git+https://github.com/pathscale/endpoint-libs.git#99691aa1782d8f83533f9de42ce31e1a5b798644"
+version = "1.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eca77ba641026af1688cfb53cc8f946a4db5490a6184d38be16073ba0b3fe337"
 dependencies = [
  "alloy-primitives",
  "async-trait",
@@ -1606,9 +1607,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "honey-id-types"
-version = "0.1.0-alpha"
-source = "git+https://github.com/pathscale/honey_id-types.git#e03610cf3065719da6abf10e8565b4fef89afef5"
+name = "honey_id-types"
+version = "1.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "33a3a65aa0502d0f856261bbb3e9b3b1536b2326e21a52977c97cd1581cb5b01"
 dependencies = [
  "async-trait",
  "derive_more 2.1.1",
@@ -2386,7 +2388,7 @@ dependencies = [
  "endpoint-libs",
  "eyre",
  "futures",
- "honey-id-types",
+ "honey_id-types",
  "num-derive",
  "num-traits",
  "once_cell",

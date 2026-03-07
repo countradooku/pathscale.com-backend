@@ -9,7 +9,7 @@ Config(
                 inner: Struct(
                     name: "UserView",
                     fields: [
-                        Field(name: "userPubId", ty: UUID),
+                        Field(name: "user_public_id", ty: UUID),
                         Field(name: "username", ty: String),
                         Field(name: "role", ty: EnumRef(name: "UserRole")),
                     ],
@@ -20,8 +20,8 @@ Config(
                     name: "SupportMessage",
                     fields: [
                         Field(name: "incoming", ty: Boolean),
-                        Field(name: "sentBy", ty: String),
-                        Field(name: "sentAt", ty: String),
+                        Field(name: "sent_by", ty: String),
+                        Field(name: "sent_at", ty: String),
                         Field(name: "content", ty: String),
                     ],
                 ),

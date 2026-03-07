@@ -22,7 +22,7 @@ impl RequestHandler for MethodListSupports {
 
     async fn handle(&self, _ctx: RequestContext, _req: Self::Request) -> Response<Self::Request> {
         Ok(ListSupportsResponse {
-            tgHandles: self
+            tg_handles: self
                 .support_user_table
                 .select_all()
                 .execute()?
