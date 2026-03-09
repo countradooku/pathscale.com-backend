@@ -1,0 +1,51 @@
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+
+Config(
+    definition: EndpointSchemaList(
+        service_name: "waitlist",
+        service_id: 4,
+        endpoints: [
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "ListLeads",
+                    code: 41000,
+                    parameters: [],
+                    returns: [
+                        Field(
+                            name: "data",
+                            ty: StructTable(struct_ref: "WaitlistLead"),
+                        ),
+                    ],
+                    stream_response: None,
+                    description: "Lists leads in the waitlist.",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Admin",
+                    ],
+                ),
+            ),
+            EndpointSchemaElement(
+                frontend_facing: true,
+                schema: (
+                    name: "AddLead",
+                    code: 41001,
+                    parameters: [
+                        Field(name: "name", ty: String),
+                        Field(name: "telegram", ty: Optional(String)),
+                        Field(name: "whatsApp", ty: Optional(String)),
+                        Field(name: "description", ty: String),
+                    ],
+                    returns: [],
+                    stream_response: None,
+                    description: "Adds a lead to the waitlist.",
+                    json_schema: (),
+                    roles: [
+                        "UserRole::Public"
+                    ],
+                ),
+            ),
+        ],
+    ),
+)

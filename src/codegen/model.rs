@@ -57,6 +57,18 @@ pub struct UserView {
     pub role: UserRole,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct WaitlistLead {
+    pub id: i64,
+    pub name: String,
+    #[serde(default)]
+    pub telegram: Option<String>,
+    #[serde(default)]
+    pub whatsApp: Option<String>,
+    pub description: String,
+}
+
 #[derive(
     Debug, Clone, Copy, Serialize, Deserialize, FromPrimitive, PartialEq, Eq, PartialOrd, Ord, EnumString, Display, Hash,
 )]
@@ -79,6 +91,10 @@ pub enum EnumEndpoint {
     ListMsgs = 31001,
     ///
     SubMsgEvents = 31002,
+    ///
+    ListLeads = 41000,
+    ///
+    AddLead = 41001,
 }
 
 impl EnumEndpoint {
@@ -93,6 +109,8 @@ impl EnumEndpoint {
             Self::SendMsg => SendMsgRequest::SCHEMA,
             Self::ListMsgs => ListMsgsRequest::SCHEMA,
             Self::SubMsgEvents => SubMsgEventsRequest::SCHEMA,
+            Self::ListLeads => ListLeadsRequest::SCHEMA,
+            Self::AddLead => AddLeadRequest::SCHEMA,
         };
         serde_json::from_str(schema).unwrap()
     }
@@ -118,6 +136,19 @@ impl From<EnumErrorCode> for ErrorCode {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct AddLeadRequest {
+    pub name: String,
+    #[serde(default)]
+    pub telegram: Option<String>,
+    #[serde(default)]
+    pub whatsApp: Option<String>,
+    pub description: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct AddLeadResponse {}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct AddSupportsRequest {
     pub tg_handles: String,
 }
@@ -134,6 +165,14 @@ pub struct InitRequest {
 pub struct InitResponse {
     pub user_public_id: Uuid,
     pub role: UserRole,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ListLeadsRequest {}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ListLeadsResponse {
+    pub data: Vec<WaitlistLead>,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -480,4 +519,76 @@ impl WsRequest for SubMsgEventsRequest {
 }
 impl WsResponse for SubMsgEventsResponse {
     type Request = SubMsgEventsRequest;
+}
+
+impl WsRequest for ListLeadsRequest {
+    type Response = ListLeadsResponse;
+    const METHOD_ID: u32 = 41000;
+    const ROLES: &[u32] = &[2];
+    const SCHEMA: &'static str = r#"{
+  "name": "ListLeads",
+  "code": 41000,
+  "parameters": [],
+  "returns": [
+    {
+      "name": "data",
+      "ty": {
+        "StructTable": {
+          "struct_ref": "WaitlistLead"
+        }
+      }
+    }
+  ],
+  "stream_response": null,
+  "description": "Lists leads in the waitlist.",
+  "json_schema": null,
+  "roles": [
+    "UserRole::Admin"
+  ]
+}"#;
+}
+impl WsResponse for ListLeadsResponse {
+    type Request = ListLeadsRequest;
+}
+
+impl WsRequest for AddLeadRequest {
+    type Response = AddLeadResponse;
+    const METHOD_ID: u32 = 41001;
+    const ROLES: &[u32] = &[0];
+    const SCHEMA: &'static str = r#"{
+  "name": "AddLead",
+  "code": 41001,
+  "parameters": [
+    {
+      "name": "name",
+      "ty": "String"
+    },
+    {
+      "name": "telegram",
+      "ty": {
+        "Optional": "String"
+      }
+    },
+    {
+      "name": "whatsApp",
+      "ty": {
+        "Optional": "String"
+      }
+    },
+    {
+      "name": "description",
+      "ty": "String"
+    }
+  ],
+  "returns": [],
+  "stream_response": null,
+  "description": "Adds a lead to the waitlist.",
+  "json_schema": null,
+  "roles": [
+    "UserRole::Public"
+  ]
+}"#;
+}
+impl WsResponse for AddLeadResponse {
+    type Request = AddLeadRequest;
 }

@@ -26,6 +26,18 @@ Config(
                     ],
                 ),
             ),
+            StructElement(
+                inner: Struct(
+                    name: "WaitlistLead",
+                    fields: [
+                        Field(name: "id", ty: Int64),
+                        Field(name: "name", ty: String),
+                        Field(name: "telegram", ty: Optional(String)),
+                        Field(name: "whatsApp", ty: Optional(String)),
+                        Field(name: "description", ty: String),
+                    ],
+                ),
+            ),
         ],
     ),
 )

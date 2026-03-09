@@ -251,6 +251,66 @@
       ],
       "id": 3,
       "name": "support"
+    },
+    {
+      "endpoints": [
+        {
+          "code": 41000,
+          "description": "Lists leads in the waitlist.",
+          "json_schema": null,
+          "name": "ListLeads",
+          "parameters": [],
+          "returns": [
+            {
+              "name": "data",
+              "ty": {
+                "StructTable": {
+                  "struct_ref": "WaitlistLead"
+                }
+              }
+            }
+          ],
+          "roles": [
+            "UserRole::Admin"
+          ],
+          "stream_response": null
+        },
+        {
+          "code": 41001,
+          "description": "Adds a lead to the waitlist.",
+          "json_schema": null,
+          "name": "AddLead",
+          "parameters": [
+            {
+              "name": "name",
+              "ty": "String"
+            },
+            {
+              "name": "telegram",
+              "ty": {
+                "Optional": "String"
+              }
+            },
+            {
+              "name": "whatsApp",
+              "ty": {
+                "Optional": "String"
+              }
+            },
+            {
+              "name": "description",
+              "ty": "String"
+            }
+          ],
+          "returns": [],
+          "roles": [
+            "UserRole::Public"
+          ],
+          "stream_response": null
+        }
+      ],
+      "id": 4,
+      "name": "waitlist"
     }
   ],
   "structs": [
@@ -298,6 +358,37 @@
           }
         ],
         "name": "UserView"
+      }
+    },
+    {
+      "Struct": {
+        "fields": [
+          {
+            "name": "id",
+            "ty": "Int64"
+          },
+          {
+            "name": "name",
+            "ty": "String"
+          },
+          {
+            "name": "telegram",
+            "ty": {
+              "Optional": "String"
+            }
+          },
+          {
+            "name": "whatsApp",
+            "ty": {
+              "Optional": "String"
+            }
+          },
+          {
+            "name": "description",
+            "ty": "String"
+          }
+        ],
+        "name": "WaitlistLead"
       }
     }
   ]

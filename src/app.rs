@@ -1,6 +1,7 @@
 mod admin_handlers;
 mod auth_handlers;
 mod support_handlers;
+mod waitlist_handlers;
 
 use std::sync::Arc;
 
@@ -16,6 +17,7 @@ use uuid::Uuid;
 use crate::app::admin_handlers::register_admin_handlers;
 use crate::app::auth_handlers::register_auth_handlers;
 use crate::app::support_handlers::register_support_handlers;
+use crate::app::waitlist_handlers::register_waitlist_handlers;
 use crate::config::Config;
 use crate::db::database::Db;
 use crate::service::support_chat::SupportChatManager;
@@ -73,6 +75,7 @@ impl App {
 
         register_admin_handlers(server, &self.ctx);
         register_support_handlers(server, &self.ctx);
+        register_waitlist_handlers(server, &self.ctx);
     }
 
     pub async fn run(self) -> Result<()> {
