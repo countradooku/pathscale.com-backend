@@ -1176,9 +1176,9 @@ dependencies = [
 
 [[package]]
 name = "endpoint-libs"
-version = "1.3.5"
+version = "1.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b317000d8b7a4fa9f0bd02e270573b7ca2440ed99f06eb50aab3ce2c135db1fc"
+checksum = "0fa4cfec905eb659ee01b9f680756c523e90455c40b8362df7b3dac043f0fd35"
 dependencies = [
  "alloy-primitives",
  "async-trait",
@@ -1611,9 +1611,9 @@ dependencies = [
 
 [[package]]
 name = "honey_id-types"
-version = "1.4.1"
+version = "1.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51b7759ce3c7298fe17598348346fb81cef82afb8790c2a41b8e7539245fe689"
+checksum = "84f331e5ae557be800283f039eb7ceeefa53277b3d8b7073585c32bc05602cc2"
 dependencies = [
  "async-trait",
  "derive_more 2.1.1",
@@ -2436,7 +2436,6 @@ dependencies = [
  "strum_macros 0.28.0",
  "tgbot",
  "tokio",
- "tokio-tungstenite",
  "tracing",
  "url",
  "uuid",
