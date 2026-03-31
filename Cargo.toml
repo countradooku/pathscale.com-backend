@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 endpoint-libs = { version = "1.3.4", features = ["ws"] }
-honey_id-types = "1.3.4"
+honey_id-types = "1.4"
 worktable = "0.8.23"
 tokio = { version = "1.50.0", features = ["full", "rt-multi-thread"] }
 tokio-tungstenite = { version = "0.28.0", features = [
