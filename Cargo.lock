@@ -1176,9 +1176,9 @@ dependencies = [
 
 [[package]]
 name = "endpoint-libs"
-version = "1.3.6"
+version = "1.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0fa4cfec905eb659ee01b9f680756c523e90455c40b8362df7b3dac043f0fd35"
+checksum = "67ca46f272e5e111eb9efebc4bbd2c250e63db4cb8e72440b6d2996bafb8ec1a"
 dependencies = [
  "alloy-primitives",
  "async-trait",
@@ -1611,9 +1611,9 @@ dependencies = [
 
 [[package]]
 name = "honey_id-types"
-version = "1.4.3"
+version = "1.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "84f331e5ae557be800283f039eb7ceeefa53277b3d8b7073585c32bc05602cc2"
+checksum = "fab36253ed6f736fde8687937a2a186d3e57730c81b50bd14ff1a667ef5cf1b8"
 dependencies = [
  "async-trait",
  "derive_more 2.1.1",
