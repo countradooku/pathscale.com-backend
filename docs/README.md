@@ -48,7 +48,7 @@ ID: 3
 ### Endpoints
 |Code|Name|Parameters|Response|Description|FE Facing|
 |-----------|-----------|----------|--------|-----------|-----------|
-|31000|SendMsg|`message: String`|||true|
+|31000|SendMsg|`message: String`, `server: String`|`serverResponse: String`||true|
 |31001|ListMsgs||`data: Vec<SupportMessage>`||true|
 |31002|SubMsgEvents|`unsub: Option<bool>`|`data: Vec<SupportMessage>`||true|
 

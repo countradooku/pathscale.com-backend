@@ -1,0 +1,12 @@
+# flyctl launch added from .gitignore
+target
+
+# Codegen generated dir
+generated
+**/node_modules
+**/.dev.vars
+**/.wrangler
+**/data
+**/logs
+**/.vscode/settings.json
+fly.toml

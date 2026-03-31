@@ -37,7 +37,7 @@ pub enum UserRole {
     ///
     Admin = 2,
     /// This role is used exclusively for connections from the Honey-Auth BE to App BEs for comms such as token callbacks
-    HoneyAuth = 3,
+    HoneyAuth = 6,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -210,10 +210,13 @@ pub struct RemoveSupportsResponse {}
 #[serde(rename_all = "camelCase")]
 pub struct SendMsgRequest {
     pub message: String,
+    pub server: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct SendMsgResponse {}
+pub struct SendMsgResponse {
+    pub serverResponse: String,
+}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetRoleRequest {
@@ -429,9 +432,18 @@ impl WsRequest for SendMsgRequest {
     {
       "name": "message",
       "ty": "String"
+    },
+    {
+      "name": "server",
+      "ty": "String"
     }
   ],
-  "returns": [],
+  "returns": [
+    {
+      "name": "serverResponse",
+      "ty": "String"
+    }
+  ],
   "stream_response": null,
   "description": "",
   "json_schema": null,

@@ -13,8 +13,9 @@ Config(
                     code: 31000,
                     parameters: [
                         Field(name: "message", ty: String),
+                        Field(name: "server", ty: String),
                     ],
-                    returns: [],
+                    returns: [Field(name: "serverResponse", ty: String)],
                     stream_response: None,
                     description: "",
                     json_schema: (),
@@ -52,9 +53,7 @@ Config(
                 schema: (
                     name: "SubMsgEvents",
                     code: 31002,
-                    parameters: [
-                        Field(name: "unsub", ty: Optional(Boolean)),
-                    ],
+                    parameters: [Field(name: "unsub", ty: Optional(Boolean))],
                     returns: [
                         Field(
                             name: "data",

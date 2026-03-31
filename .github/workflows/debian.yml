@@ -1,0 +1,112 @@
+# name: Build and Deploy
+#
+# on:
+#   push:
+#     branches:
+#       - master
+#       ## i would suggest running this only on a "stable" branch especialy if every push is to main, but i think caching target helps with this
+#   workflow_dispatch:
+#   # Allows manual triggering on any branch
+#
+# jobs:
+#   build:
+#     runs-on: ${{ matrix.runner }}
+#     strategy:
+#       matrix:
+#         runner: [ buildjet-4vcpu-arm ]
+#
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+#
+#       - uses: Swatinem/rust-cache@v2
+#         with:
+#           cache-provider: buildjet
+#           cache-on-failure: "true"
+#           add-job-id-key: "false"
+#           cache-workspace-crates: "true" # Allows the performance measurement workspace crates to be cached
+#
+#       - name: Install Rust
+#         uses: actions-rs/toolchain@v1
+#         with:
+#           toolchain: 1.89
+#           profile: minimal
+#           override: true
+#
+#       - name: Ubuntu version
+#         run: lsb_release -a
+#
+#       - name: Install cargo-deb
+#         run: cargo install cargo-deb --no-default-features
+#
+#       - name: Build Rust project
+#         env:
+#           PACKAGES: "nofilter_be"
+#         run: |
+#           for package in $PACKAGES; do
+#             cargo build --package $package --release --timings
+#           done
+#
+#       - name: Cargo timings
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: cargo-timings-report-${{ matrix.runner }}
+#           path: target/cargo-timings/cargo-timing.html
+#
+#       - name: Create Debian package
+#         run: cargo deb --no-build --deb-version 1.0.$GITHUB_RUN_NUMBER --no-strip -p nofilter_be
+#
+#       - name: List Deb files
+#         run: |
+#           find . -name "*.deb"
+#
+#       - name: Upload to bunny
+#         env:
+#           STORAGE_API_KEY: ${{ secrets.BUNNYCDN_STORAGE_API_KEY }}
+#           ZONE_API_KEY: ${{ secrets.BUNNYCDN_ZONE_API_KEY }}
+#           ZONE_ID: ${{ secrets.BUNNYCDN_DEV_ZONE_ID }}
+#           STORAGE_NAME: ${{ secrets.BUNNYCDN_STORAGE_NAME }}
+#         run: |
+#           # Determine architecture and set suffix
+#           ARCH=$(uname -m)
+#           if [[ "$ARCH" == "x86_64" ]]; then
+#             SUFFIX="amd64"
+#           elif [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
+#             SUFFIX="arm64"
+#           else
+#             echo "Unsupported architecture: $ARCH"
+#             exit 1
+#           fi
+#
+#           echo "Detected architecture: $ARCH"
+#           echo "Using suffix: $SUFFIX"
+#
+#           # Determine latest filename based on branch
+#           if [[ "$GITHUB_REF_NAME" == "master" || "$GITHUB_REF_NAME" == "main" ]]; then
+#             LATEST_NAME="nofilter-be_latest_$SUFFIX.deb"
+#           else
+#             # Sanitize branch name for use in filename (replace / with -)
+#             BRANCH_NAME="${GITHUB_REF_NAME//\//-}"
+#             LATEST_NAME="nofilter-be_latest_${BRANCH_NAME}_$SUFFIX.deb"
+#           fi
+#           echo "Latest filename: $LATEST_NAME"
+#
+#           cd target/debian
+#           DEB_FILE=$(ls *.deb)  # Get the .deb file name
+#
+#           echo "Versioned filename: $DEB_FILE"
+#           echo "Storage URL (Latest): https://storage.bunnycdn.com/$STORAGE_NAME/$LATEST_NAME"
+#           echo "Storage URL (Versioned): https://storage.bunnycdn.com/$STORAGE_NAME/$DEB_FILE"
+#
+#           # Upload versioned file
+#           curl --request PUT \
+#             --header "AccessKey: $STORAGE_API_KEY" \
+#             -T "$DEB_FILE" "https://storage.bunnycdn.com/$STORAGE_NAME/$DEB_FILE"
+#
+#           # Also upload as latest (with branch name for non-master branches)
+#           curl --request PUT \
+#             --header "AccessKey: $STORAGE_API_KEY" \
+#             -T "$DEB_FILE" "https://storage.bunnycdn.com/$STORAGE_NAME/$LATEST_NAME"
+#
+#           # Purge the cache
+#           curl -s --request POST --header "AccessKey: $ZONE_API_KEY" --header "Content-Type: application/json" --header "Accept: application/json" "https://bunnycdn.com/api/pullzone/$ZONE_ID/purgeCache" --data "{"id":"$ZONE_ID"}"

@@ -50,9 +50,11 @@ pub struct DatabaseConfig {
     pub path: PathBuf,
 }
 
-#[derive(Clone, Debug, Deserialize, SmartDefault)]
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(default)]
 pub struct TgBotConfig {
-    pub token: String,
+    pub enabled: Option<bool>,
+    pub token: Option<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, SmartDefault)]

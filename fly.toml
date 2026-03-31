@@ -1,0 +1,31 @@
+# fly.toml app configuration file generated for pathscale-be on 2026-03-30T11:29:30+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'pathscale-be'
+primary_region = 'sin'
+kill_signal = 'SIGTERM'
+kill_timeout = '1m30s'
+
+[build]
+
+
+[env]
+  HONEY_ID_ADDR = 'wss://auth.honey.id/'
+  DB_PATH = '/mnt/tigris/db'
+  HONEY_ID_APP_PUBLIC_ID='6d2195b9-3410-4687-bc87-14a6effcccc3'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 256

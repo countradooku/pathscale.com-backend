@@ -22,7 +22,7 @@
           {
             "description": "This role is used exclusively for connections from the Honey-Auth BE to App BEs for comms such as token callbacks",
             "name": "HoneyAuth",
-            "value": 3
+            "value": 6
           }
         ]
       }
@@ -181,9 +181,18 @@
             {
               "name": "message",
               "ty": "String"
+            },
+            {
+              "name": "server",
+              "ty": "String"
             }
           ],
-          "returns": [],
+          "returns": [
+            {
+              "name": "serverResponse",
+              "ty": "String"
+            }
+          ],
           "roles": [
             "UserRole::Admin",
             "UserRole::Authorized",

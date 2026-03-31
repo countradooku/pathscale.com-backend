@@ -1,0 +1,7 @@
+{
+  "name": "pathscale-be-cf",
+  "private": true,
+  "dependencies": {
+    "@cloudflare/containers": "^0.0.8"
+  }
+}

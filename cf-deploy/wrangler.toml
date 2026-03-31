@@ -1,0 +1,35 @@
+name = "pathscale-be"
+main = "src/index.ts"
+compatibility_date = "2026-03-20"
+keep_vars = true
+
+[[durable_objects.bindings]]
+name = "PATHSCALE_CONTAINER"
+class_name = "PathscaleContainer"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["PathscaleContainer"]
+
+[vars]
+# HONEY_ID_ADDR = "wss://auth.honey.id/"
+# DB_PATH = "/mnt/r2/db"
+R2_ACCOUNT_ID = "1b7c8f39b677597cd7d2d8740cdf70d0"        # your Cloudflare account ID
+R2_BUCKET_NAME = "honey-auth"       # R2 bucket to mount at /mnt/r2
+R2_PREFIX = "wt/pathscale-be-cftest-veon-1"            # optional key prefix within the bucket
+# ADMIN_PUB_ID = ""         # optional admin user public ID
+
+[[containers]]
+name = "pathscale-be"
+class_name = "PathscaleContainer"
+image = "../Dockerfile.cf"
+max_instances = 1
+
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true

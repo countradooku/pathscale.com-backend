@@ -25,7 +25,7 @@ use crate::service::support_chat::SupportChatManager;
 pub struct AppCtx {
     pub config: Arc<Config>,
     pub db: Arc<Db>,
-    pub support_chat_manager: Arc<SupportChatManager>,
+    pub support_chat_manager: Option<Arc<SupportChatManager>>,
 }
 
 impl AppCtx {
@@ -36,12 +36,20 @@ impl AppCtx {
             bootstrap_admin_user(&db, user_config.admin_pub_id).await?;
         }
 
-        let tg_client = Client::new(config.tg_bot.token.clone())?;
-        let support_chat_manager = Arc::new(SupportChatManager::new(
-            tg_client,
-            db.support_user_table.clone(),
-            db.support_msg_table.clone(),
-        ));
+        let support_chat_manager = if let Some(true) = config.tg_bot.enabled {
+            if let Some(token) = &config.tg_bot.token {
+                let tg_client = Client::new(token.clone())?;
+                Some(Arc::new(SupportChatManager::new(
+                    tg_client,
+                    db.support_user_table.clone(),
+                    db.support_msg_table.clone(),
+                )))
+            } else {
+                None
+            }
+        } else {
+            None
+        };
 
         let app = Self {
             config: Arc::new(config.clone()),
@@ -93,7 +101,12 @@ impl App {
             .run_until(async {
                 tokio::select! {
                     Err(res) = server.listen() => warn!("Server terminated, {res:?}"),
-                    _ = self.ctx.support_chat_manager.run() => warn!("Support Bot terminated"),
+                    _ = async {
+                        match &self.ctx.support_chat_manager {
+                            Some(m) => m.run().await,
+                            None => std::future::pending::<()>().await,
+                        }
+                    } => warn!("Support Bot terminated"),
                     _ = wait_for_signals(&mut sigterm, &mut sigint) => {}
                 }
             })

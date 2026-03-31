@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Bumps the latest path-be-v* tag and optionally pushes it.
+# Bumps the latest $APP_NAME-v* tag and pushes it by default.
 #
-# Usage: bump-tag.sh [COMPONENT] [--push]
+# Usage: bump-tag.sh [COMPONENT] [--nopush]
 #
 # COMPONENT (default: patch):
 #   major        — bump major, reset minor/patch           e.g. v1.2.3 → v2.0.0
@@ -13,16 +13,18 @@
 #
 # Bumping major/minor/patch always drops any alpha suffix (promotes to stable).
 #
-# --push: create and push the tag to origin in one step.
+# --nopush: do not push the tag to origin.
 
 set -euo pipefail
 
+APP_NAME="pathscale-be"
+
 BUMP="patch"
-PUSH=false
+NOPUSH=false
 
 for arg in "$@"; do
     case "$arg" in
-        --push) PUSH=true ;;
+        --nopush) NOPUSH=true ;;
         major|minor|patch|alpha|alpha-major|alpha-minor) BUMP="$arg" ;;
         *) echo "Unknown argument: $arg" >&2; exit 1 ;;
     esac
@@ -30,14 +32,14 @@ done
 
 # ── Find latest tag ──────────────────────────────────────────────────────────
 
-LATEST=$(git tag --list "path-be-v*" --sort=-version:refname | head -1)
+LATEST=$(git tag --list "${APP_NAME}-v*" --sort=-version:refname | head -1)
 
 if [[ -z "$LATEST" ]]; then
-    NEW_TAG="path-be-v0.0.1"
-    echo "No existing path-be-v* tags found — starting at $NEW_TAG"
+    NEW_TAG="${APP_NAME}-v0.0.1"
+    echo "No existing ${APP_NAME}-v* tags found — starting at $NEW_TAG"
 else
     echo "Latest: $LATEST"
-    VERSION="${LATEST#path-be-v}"
+    VERSION="${LATEST#${APP_NAME}-v}"
 
     # Parse stable or alpha variant
     # Accepts both: -alpha1.2.3 and -alpha-1.2.3
@@ -64,13 +66,13 @@ else
 
     case "$BUMP" in
         major)
-            NEW_TAG="path-be-v$((MAJOR+1)).0.0"
+            NEW_TAG="${APP_NAME}-v$((MAJOR+1)).0.0"
             ;;
         minor)
-            NEW_TAG="path-be-v${MAJOR}.$((MINOR+1)).0"
+            NEW_TAG="${APP_NAME}-v${MAJOR}.$((MINOR+1)).0"
             ;;
         patch)
-            NEW_TAG="path-be-v${MAJOR}.${MINOR}.$((PATCH+1))"
+            NEW_TAG="${APP_NAME}-v${MAJOR}.${MINOR}.$((PATCH+1))"
             ;;
         alpha)
             if [[ "$IS_ALPHA" == true ]]; then
@@ -78,7 +80,7 @@ else
             else
                 AM=0; AN=0; AP=1
             fi
-            NEW_TAG="path-be-v${MAJOR}.${MINOR}.${PATCH}-alpha${AM}.${AN}.${AP}"
+            NEW_TAG="${APP_NAME}-v${MAJOR}.${MINOR}.${PATCH}-alpha${AM}.${AN}.${AP}"
             ;;
         alpha-minor)
             if [[ "$IS_ALPHA" == true ]]; then
@@ -86,7 +88,7 @@ else
             else
                 AM=0; AN=1; AP=0
             fi
-            NEW_TAG="path-be-v${MAJOR}.${MINOR}.${PATCH}-alpha${AM}.${AN}.${AP}"
+            NEW_TAG="${APP_NAME}-v${MAJOR}.${MINOR}.${PATCH}-alpha${AM}.${AN}.${AP}"
             ;;
         alpha-major)
             if [[ "$IS_ALPHA" == true ]]; then
@@ -94,7 +96,7 @@ else
             else
                 AM=1; AN=0; AP=0
             fi
-            NEW_TAG="path-be-v${MAJOR}.${MINOR}.${PATCH}-alpha${AM}.${AN}.${AP}"
+            NEW_TAG="${APP_NAME}-v${MAJOR}.${MINOR}.${PATCH}-alpha${AM}.${AN}.${AP}"
             ;;
     esac
 fi
@@ -102,9 +104,9 @@ fi
 echo "New tag: $NEW_TAG"
 git tag "$NEW_TAG"
 
-if [[ "$PUSH" == true ]]; then
+if [[ "$NOPUSH" == true ]]; then
+    echo "Run 'git push origin $NEW_TAG' to trigger CI, or rerun without --nopush"
+else
     git push origin "$NEW_TAG"
     echo "Pushed $NEW_TAG"
-else
-    echo "Run 'git push origin $NEW_TAG' to trigger CI, or rerun with --push"
 fi
