@@ -12,11 +12,11 @@ pub fn register_support_handlers(server: &mut WebsocketServer, ctx: &AppCtx) {
     // TODO: SendMsg is a temporary debug endpoint for proxying messages to an arbitrary server,
     // it should be removed or replaced with the real implementation before production
     server.add_handler(MethodSendMsg {
-        chat_manager: ctx.support_chat_manager.clone(),
         user_table: ctx.db.user_table.clone(),
     });
 
-    let Some(chat_manager) = &ctx.support_chat_manager else {
+    let chat_manager = ctx.support_chat_manager.lock().unwrap().clone();
+    let Some(chat_manager) = chat_manager else {
         return;
     };
 

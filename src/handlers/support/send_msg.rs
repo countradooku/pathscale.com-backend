@@ -15,7 +15,6 @@ use endpoint_libs::libs::{
 use crate::{
     codegen::model::{SendMsgRequest, SendMsgResponse},
     db::schema::user::UserWorkTable,
-    service::support_chat::SupportChatManager,
 };
 
 #[derive(Serialize)]
@@ -24,7 +23,6 @@ struct ForwardedMsg<'a> {
 }
 
 pub struct MethodSendMsg {
-    pub chat_manager: Option<Arc<SupportChatManager>>,
     pub user_table: Arc<UserWorkTable>,
 }
 
@@ -33,16 +31,6 @@ impl RequestHandler for MethodSendMsg {
     type Request = SendMsgRequest;
 
     async fn handle(&self, _ctx: RequestContext, req: Self::Request) -> Response<Self::Request> {
-        // let user_id = ctx.user_id as i64;
-        // let user = self
-        //     .user_table
-        //     .select(user_id)
-        //     .ok_or(eyre!("Error fetching user with ID: {user_id}"))?;
-        // self.chat_manager
-        //     .send_msg_to_support(user.pub_id, user.username, req.message)
-        //     .await?;
-        // Ok(SendMsgResponse {})
-
         info!(server = %req.server, "Proxying SendMsg request");
 
         debug!(server = %req.server, "Connecting to server via WsClient");

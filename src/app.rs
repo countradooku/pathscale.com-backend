@@ -3,7 +3,7 @@ mod auth_handlers;
 mod support_handlers;
 mod waitlist_handlers;
 
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use endpoint_libs::libs::signal::{init_signals, wait_for_signals};
 use endpoint_libs::libs::ws::WebsocketServer;
@@ -13,6 +13,7 @@ use honey_id_types::handlers::convenience_utils::token_management::TokenWorkTabl
 use tgbot::api::Client;
 use tracing::{info, warn};
 use uuid::Uuid;
+use worktable::select::SelectQueryExecutor;
 
 use crate::app::admin_handlers::register_admin_handlers;
 use crate::app::auth_handlers::register_auth_handlers;
@@ -25,7 +26,8 @@ use crate::service::support_chat::SupportChatManager;
 pub struct AppCtx {
     pub config: Arc<Config>,
     pub db: Arc<Db>,
-    pub support_chat_manager: Option<Arc<SupportChatManager>>,
+    pub support_chat_manager: Arc<Mutex<Option<Arc<SupportChatManager>>>>,
+    pub tg_bot_task: Arc<Mutex<Option<tokio::task::AbortHandle>>>,
 }
 
 impl AppCtx {
@@ -36,9 +38,26 @@ impl AppCtx {
             bootstrap_admin_user(&db, user_config.admin_pub_id).await?;
         }
 
-        let support_chat_manager = if let Some(true) = config.tg_bot.enabled {
-            if let Some(token) = &config.tg_bot.token {
-                let tg_client = Client::new(token.clone())?;
+        // Load bot config from DB (takes precedence over file config)
+        let db_config = db
+            .tg_bot_config_table
+            .select_all()
+            .execute()
+            .ok()
+            .and_then(|rows| rows.into_iter().next());
+
+        let (bot_enabled, bot_token) = if let Some(row) = db_config {
+            (row.enabled, row.token)
+        } else {
+            (
+                config.tg_bot.enabled.unwrap_or(false),
+                config.tg_bot.token.clone(),
+            )
+        };
+
+        let support_chat_manager = if bot_enabled {
+            if let Some(token) = bot_token {
+                let tg_client = Client::new(token)?;
                 Some(Arc::new(SupportChatManager::new(
                     tg_client,
                     db.support_user_table.clone(),
@@ -51,13 +70,12 @@ impl AppCtx {
             None
         };
 
-        let app = Self {
-            config: Arc::new(config.clone()),
+        Ok(Self {
+            config: Arc::new(config),
             db,
-            support_chat_manager,
-        };
-
-        Ok(app)
+            support_chat_manager: Arc::new(Mutex::new(support_chat_manager)),
+            tg_bot_task: Arc::new(Mutex::new(None)),
+        })
     }
 }
 
@@ -99,14 +117,17 @@ impl App {
 
         localset
             .run_until(async {
+                // Spawn initial bot task if configured
+                {
+                    let manager = self.ctx.support_chat_manager.lock().unwrap().clone();
+                    if let Some(m) = manager {
+                        let handle = tokio::task::spawn_local(async move { m.run().await });
+                        *self.ctx.tg_bot_task.lock().unwrap() = Some(handle.abort_handle());
+                    }
+                }
+
                 tokio::select! {
                     Err(res) = server.listen() => warn!("Server terminated, {res:?}"),
-                    _ = async {
-                        match &self.ctx.support_chat_manager {
-                            Some(m) => m.run().await,
-                            None => std::future::pending::<()>().await,
-                        }
-                    } => warn!("Support Bot terminated"),
                     _ = wait_for_signals(&mut sigterm, &mut sigint) => {}
                 }
             })

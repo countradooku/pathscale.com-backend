@@ -86,6 +86,10 @@ pub enum EnumEndpoint {
     ///
     ListSupports = 21004,
     ///
+    SetTgBotConfig = 21005,
+    ///
+    GetTgBotConfig = 21006,
+    ///
     SendMsg = 31000,
     ///
     ListMsgs = 31001,
@@ -106,6 +110,8 @@ impl EnumEndpoint {
             Self::AddSupports => AddSupportsRequest::SCHEMA,
             Self::RemoveSupports => RemoveSupportsRequest::SCHEMA,
             Self::ListSupports => ListSupportsRequest::SCHEMA,
+            Self::SetTgBotConfig => SetTgBotConfigRequest::SCHEMA,
+            Self::GetTgBotConfig => GetTgBotConfigRequest::SCHEMA,
             Self::SendMsg => SendMsgRequest::SCHEMA,
             Self::ListMsgs => ListMsgsRequest::SCHEMA,
             Self::SubMsgEvents => SubMsgEventsRequest::SCHEMA,
@@ -206,6 +212,25 @@ pub struct RemoveSupportsRequest {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveSupportsResponse {}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct SetTgBotConfigRequest {
+    pub enabled: bool,
+    #[serde(default)]
+    pub token: Option<String>,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct SetTgBotConfigResponse {}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct GetTgBotConfigRequest {}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct GetTgBotConfigResponse {
+    pub enabled: bool,
+    pub token_set: bool,
+}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SendMsgRequest {
@@ -419,6 +444,68 @@ impl WsRequest for ListSupportsRequest {
 }
 impl WsResponse for ListSupportsResponse {
     type Request = ListSupportsRequest;
+}
+
+impl WsRequest for SetTgBotConfigRequest {
+    type Response = SetTgBotConfigResponse;
+    const METHOD_ID: u32 = 21005;
+    const ROLES: &[u32] = &[2];
+    const SCHEMA: &'static str = r#"{
+  "name": "SetTgBotConfig",
+  "code": 21005,
+  "parameters": [
+    {
+      "name": "enabled",
+      "ty": "Boolean"
+    },
+    {
+      "name": "token",
+      "ty": {
+        "Optional": "String"
+      }
+    }
+  ],
+  "returns": [],
+  "stream_response": null,
+  "description": "",
+  "json_schema": null,
+  "roles": [
+    "UserRole::Admin"
+  ]
+}"#;
+}
+impl WsResponse for SetTgBotConfigResponse {
+    type Request = SetTgBotConfigRequest;
+}
+
+impl WsRequest for GetTgBotConfigRequest {
+    type Response = GetTgBotConfigResponse;
+    const METHOD_ID: u32 = 21006;
+    const ROLES: &[u32] = &[2];
+    const SCHEMA: &'static str = r#"{
+  "name": "GetTgBotConfig",
+  "code": 21006,
+  "parameters": [],
+  "returns": [
+    {
+      "name": "enabled",
+      "ty": "Boolean"
+    },
+    {
+      "name": "token_set",
+      "ty": "Boolean"
+    }
+  ],
+  "stream_response": null,
+  "description": "",
+  "json_schema": null,
+  "roles": [
+    "UserRole::Admin"
+  ]
+}"#;
+}
+impl WsResponse for GetTgBotConfigResponse {
+    type Request = GetTgBotConfigRequest;
 }
 
 impl WsRequest for SendMsgRequest {
