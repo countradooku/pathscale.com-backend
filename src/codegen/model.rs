@@ -235,13 +235,10 @@ pub struct GetTgBotConfigResponse {
 #[serde(rename_all = "camelCase")]
 pub struct SendMsgRequest {
     pub message: String,
-    pub server: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct SendMsgResponse {
-    pub serverResponse: String,
-}
+pub struct SendMsgResponse {}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetRoleRequest {
@@ -519,18 +516,9 @@ impl WsRequest for SendMsgRequest {
     {
       "name": "message",
       "ty": "String"
-    },
-    {
-      "name": "server",
-      "ty": "String"
     }
   ],
-  "returns": [
-    {
-      "name": "serverResponse",
-      "ty": "String"
-    }
-  ],
+  "returns": [],
   "stream_response": null,
   "description": "",
   "json_schema": null,

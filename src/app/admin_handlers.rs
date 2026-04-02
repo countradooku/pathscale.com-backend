@@ -19,24 +19,16 @@ pub fn register_admin_handlers(server: &mut WebsocketServer, ctx: &AppCtx) {
     server.add_handler(MethodAddSupports {
         support_user_table: ctx.db.support_user_table.clone(),
     });
-
     server.add_handler(MethodRemoveSupports {
         support_user_table: ctx.db.support_user_table.clone(),
     });
-
     server.add_handler(MethodListSupports {
         support_user_table: ctx.db.support_user_table.clone(),
     });
-
     server.add_handler(MethodSetTgBotConfig {
-        config_table: ctx.db.tg_bot_config_table.clone(),
-        support_chat_manager: ctx.support_chat_manager.clone(),
-        tg_bot_task: ctx.tg_bot_task.clone(),
-        support_user_table: ctx.db.support_user_table.clone(),
-        support_msg_table: ctx.db.support_msg_table.clone(),
+        tg_bot_service: ctx.tg_bot_service.clone(),
     });
-
     server.add_handler(MethodGetTgBotConfig {
-        config_table: ctx.db.tg_bot_config_table.clone(),
+        tg_bot_service: ctx.tg_bot_service.clone(),
     });
 }

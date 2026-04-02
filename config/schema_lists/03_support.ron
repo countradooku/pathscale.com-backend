@@ -13,9 +13,8 @@ Config(
                     code: 31000,
                     parameters: [
                         Field(name: "message", ty: String),
-                        Field(name: "server", ty: String),
                     ],
-                    returns: [Field(name: "serverResponse", ty: String)],
+                    returns: [],
                     stream_response: None,
                     description: "",
                     json_schema: (),

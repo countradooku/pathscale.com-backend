@@ -3,7 +3,7 @@ mod auth_handlers;
 mod support_handlers;
 mod waitlist_handlers;
 
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 use endpoint_libs::libs::signal::{init_signals, wait_for_signals};
 use endpoint_libs::libs::ws::WebsocketServer;
@@ -13,7 +13,6 @@ use honey_id_types::handlers::convenience_utils::token_management::TokenWorkTabl
 use tgbot::api::Client;
 use tracing::{info, warn};
 use uuid::Uuid;
-use worktable::select::SelectQueryExecutor;
 
 use crate::app::admin_handlers::register_admin_handlers;
 use crate::app::auth_handlers::register_auth_handlers;
@@ -22,12 +21,12 @@ use crate::app::waitlist_handlers::register_waitlist_handlers;
 use crate::config::Config;
 use crate::db::database::Db;
 use crate::service::support_chat::SupportChatManager;
+use crate::service::tg_bot_service::TgBotService;
 
 pub struct AppCtx {
     pub config: Arc<Config>,
     pub db: Arc<Db>,
-    pub support_chat_manager: Arc<Mutex<Option<Arc<SupportChatManager>>>>,
-    pub tg_bot_task: Arc<Mutex<Option<tokio::task::AbortHandle>>>,
+    pub tg_bot_service: Arc<TgBotService>,
 }
 
 impl AppCtx {
@@ -38,13 +37,8 @@ impl AppCtx {
             bootstrap_admin_user(&db, user_config.admin_pub_id).await?;
         }
 
-        // Load bot config from DB (takes precedence over file config)
-        let db_config = db
-            .tg_bot_config_table
-            .select_all()
-            .execute()
-            .ok()
-            .and_then(|rows| rows.into_iter().next());
+        // Load bot config from DB (takes precedence over file config on subsequent starts).
+        let db_config = db.tg_bot_config_table.select(1i64);
 
         let (bot_enabled, bot_token) = if let Some(row) = db_config {
             (row.enabled, row.token)
@@ -55,7 +49,7 @@ impl AppCtx {
             )
         };
 
-        let support_chat_manager = if bot_enabled {
+        let initial_manager = if bot_enabled {
             if let Some(token) = bot_token {
                 let tg_client = Client::new(token)?;
                 Some(Arc::new(SupportChatManager::new(
@@ -70,11 +64,17 @@ impl AppCtx {
             None
         };
 
+        let tg_bot_service = Arc::new(TgBotService::new(
+            db.tg_bot_config_table.clone(),
+            db.support_user_table.clone(),
+            db.support_msg_table.clone(),
+            initial_manager,
+        ));
+
         Ok(Self {
             config: Arc::new(config),
             db,
-            support_chat_manager: Arc::new(Mutex::new(support_chat_manager)),
-            tg_bot_task: Arc::new(Mutex::new(None)),
+            tg_bot_service,
         })
     }
 }
@@ -117,14 +117,8 @@ impl App {
 
         localset
             .run_until(async {
-                // Spawn initial bot task if configured
-                {
-                    let manager = self.ctx.support_chat_manager.lock().unwrap().clone();
-                    if let Some(m) = manager {
-                        let handle = tokio::task::spawn_local(async move { m.run().await });
-                        *self.ctx.tg_bot_task.lock().unwrap() = Some(handle.abort_handle());
-                    }
-                }
+                // Spawn initial bot polling task inside the LocalSet (tgbot LongPoll is !Send).
+                self.ctx.tg_bot_service.spawn_initial_task();
 
                 tokio::select! {
                     Err(res) = server.listen() => warn!("Server terminated, {res:?}"),
@@ -133,9 +127,9 @@ impl App {
             })
             .await;
 
-        // no matter if it was server issue or thread return signal, go with graceful termination procedure
+        // Graceful shutdown: wait for in-flight DB ops.
         tokio::select! {
-            _ = self.ctx.db.wait_for_ops() =>{
+            _ = self.ctx.db.wait_for_ops() => {
                 warn!("Gracefully terminated all threads");
             },
             _ = tokio::time::sleep(std::time::Duration::from_secs(15)) => {
