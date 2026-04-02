@@ -43,10 +43,7 @@ impl AppCtx {
         let (bot_enabled, bot_token) = if let Some(row) = db_config {
             (row.enabled, row.token)
         } else {
-            (
-                config.tg_bot.enabled.unwrap_or(false),
-                config.tg_bot.token.clone(),
-            )
+            (config.tg_bot.enabled.unwrap_or(false), config.tg_bot.token.clone())
         };
 
         let initial_manager = if bot_enabled {
