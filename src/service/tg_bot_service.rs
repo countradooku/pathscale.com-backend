@@ -99,20 +99,20 @@ impl TgBotService {
         *self.manager.lock() = None;
 
         // Start a new bot task if now enabled and a token is available.
-        if enabled {
-            if let Some(token) = effective_token {
-                let tg_client = Client::new(token)?;
-                let manager = Arc::new(SupportChatManager::new(
-                    tg_client,
-                    self.support_user_table.clone(),
-                    self.support_msg_table.clone(),
-                ));
-                let manager_clone = manager.clone();
-                // spawn_local because tgbot's LongPoll is !Send
-                let handle = tokio::task::spawn_local(async move { manager_clone.run().await });
-                *self.task_handle.lock() = Some(handle.abort_handle());
-                *self.manager.lock() = Some(manager);
-            }
+        if enabled
+            && let Some(token) = effective_token
+        {
+            let tg_client = Client::new(token)?;
+            let manager = Arc::new(SupportChatManager::new(
+                tg_client,
+                self.support_user_table.clone(),
+                self.support_msg_table.clone(),
+            ));
+            let manager_clone = manager.clone();
+            // spawn_local because tgbot's LongPoll is !Send
+            let handle = tokio::task::spawn_local(async move { manager_clone.run().await });
+            *self.task_handle.lock() = Some(handle.abort_handle());
+            *self.manager.lock() = Some(manager);
         }
 
         Ok(())
